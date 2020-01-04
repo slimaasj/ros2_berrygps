@@ -1,0 +1,7 @@
+berry_gps:
+  ros__parameters:
+    port: "/dev/serial0"
+    baud: 9600
+    frame_id: "gps"
+    time_ref_source: "gps"
+    useRMC: false
