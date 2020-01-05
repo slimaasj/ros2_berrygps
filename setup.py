@@ -4,6 +4,7 @@ import os
 from setuptools import setup
 
 package_name = 'ros2_berrygps'
+share_dir = os.path.join('share', package_name)
 
 setup(
     name=package_name,
@@ -13,13 +14,18 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name), glob('launch/*.launch.py')),
-        (os.path.join('share', package_name), glob('config/*.yaml')),
-        (os.path.join('share', package_name), glob('config/*.ini')),
+        (os.path.join(share_dir, 'launch'), glob('launch/*.launch.py')),
+        (os.path.join(share_dir, 'config'), glob('config/*.yaml')),
+        (share_dir, glob('config/*.ini')),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools',
+                      'pyserial',
+                      'numpy',
+                      'pyyaml'],
     zip_safe=True,
+    author='Matt Murray',
     maintainer='Matt Murray',
+    keywords=['ROS2'],
     maintainer_email='mattanimation@gmail.com',
     description='A package to publish GPS and IMU message from the BerryGPS Hat.',
     license='MIT',

@@ -6,6 +6,7 @@ import RTIMU
 
 import rclpy
 from rclpy.node import Node
+from ament_index_python.packages import get_package_share_directory
 
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Quaternion, Vector3
@@ -27,16 +28,19 @@ class IMUNode(Node):
     """
 
     def __init__(self):
-        super().__init__('berry_imu_driver')
+        super().__init__('berry_imu_driver', namespace="", allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
 
         self.frame_id = better_get_parameter_or(self, 'frame_id', 'imu').value
-        self.setting_file = better_get_parameter_or(self, 'settings_file', "").value
+        # should be a .ini file but we don't include the extension
+        settings_file_root = get_package_share_directory('ros2_berrygps')
+        self.settings_filename = better_get_parameter_or(self, 'settings_file', "RTIMULib").value
+        self.settings_file = os.path.join(settings_file_root, self.settings_filename)
 
-        self.get_logger().info("Using settings file " + self.setting_file)
-        if not os.path.exists(self.setting_file):
+        self.get_logger().info("Using settings file " + self.settings_file)
+        if not os.path.exists(self.settings_file):
             self.get_logger().info("Settings file does not exist, will be created")
 
-        s = RTIMU.Settings(self.setting_file)
+        s = RTIMU.Settings(self.settings_file)
         self.imu = RTIMU.RTIMU(s)
         self.pressure = RTIMU.RTPressure(s)
 
@@ -114,24 +118,24 @@ class IMUNode(Node):
             """
 
             if data is not None:
-                self.get_logger().info("IMU_DATA: {0}".format(data))
+                # self.get_logger().info("IMU_DATA: {0}".format(data))
                 (data["pressureValid"], data["pressure"], data["temperatureValid"], data["temperature"]) = self.pressure.pressureRead()
                 fusionPose = data["fusionPose"]
-                self.get_logger().info("r: {0} p: {1} y: {2}".format(
-                    math.degrees(fusionPose[0]), 
-                    math.degrees(fusionPose[1]),
-                    math.degrees(fusionPose[2])
-                ))
+                #self.get_logger().info("r: {0} p: {1} y: {2}".format(
+                #    math.degrees(fusionPose[0]), 
+                #    math.degrees(fusionPose[1]),
+                #    math.degrees(fusionPose[2])
+                #))
                 
                 # TODO : publish this info too for GPS fusion
-                if data["pressureValid"]:
-                    self.get_logger().info("Pressure: {0}, height above sea level: {1}".format(
-                        data["pressure"],
-                        compute_height(data["pressure"])
-                    ))
+                #if data["pressureValid"]:
+                #    self.get_logger().info("Pressure: {0}, height above sea level: {1}".format(
+                #        data["pressure"],
+                #        compute_height(data["pressure"])
+                #    ))
                 
-                if data["temperatureValid"]:
-                    self.get_logger().info("Temperature: {0}".format(data["temperature"]))
+                #if data["temperatureValid"]:
+                #    self.get_logger().info("Temperature: {0}".format(data["temperature"]))
                 
                 # build msg and publish
                 qfp = data['fusionQPose']

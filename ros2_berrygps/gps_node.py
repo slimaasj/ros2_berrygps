@@ -30,7 +30,7 @@ class GPSNode(Node):
     """
 
     def __init__(self):
-        super().__init__('berry_gps_driver')
+        super().__init__('berry_gps_driver', namespace="", allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
 
         self.serial_port = better_get_parameter_or(self, 'port', '/dev/serial0').value
         self.baudrate = better_get_parameter_or(self, 'baud', 9600).value
@@ -311,8 +311,8 @@ class GPSNode(Node):
 
     """Helper method for getting the frame_id with the correct TF prefix"""
     def get_frame_id(self) -> str:
-        frame_id = self.get_parameter_or('frame_id', 'gps').value
-        prefix = self.declare_parameter('tf_prefix', '').value
+        frame_id = better_get_parameter_or(self, 'frame_id', 'gps').value
+        prefix = better_get_parameter_or(self, 'tf_prefix', '').value
         if len(prefix):
             return '%s/%s' % (prefix, frame_id)
         return frame_id

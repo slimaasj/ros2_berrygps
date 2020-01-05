@@ -1,8 +1,7 @@
-berrygps_node:
+gps_node:
   ros__parameters:
-    port: "/dev/gps0"
+    port: "/dev/ttyS6"
     baud: 9600
     frame_id: "gps"
     time_ref_source: "gps"
     useRMC: false
-    settings_file: RTIMULib
