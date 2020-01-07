@@ -2,8 +2,7 @@
 G_TO_MPSS = 9.80665
 
 
-
-def compute_height(pressure: float) -> float:
+def get_altitude(pressure: float, sea_level_hPa: float = 1013.25) -> float:
     """
     the conversion uses the formula:
     
@@ -21,9 +20,26 @@ def compute_height(pressure: float) -> float:
     h = 44330.8 * (1 - (p / P0)**0.190263)
     
     Arguments:
-        pressure {float} -- [description]
+        pressure {float} -- current pressure 
+        sea_level_hPa {float} -- The current hPa at sea level.
     
     Returns:
         [type] -- [description]
     """
-    return 44330.8 * (1 - pow(pressure / 1013.25, 0.190263))
+    return 44330.8 * (1 - pow(pressure / sea_level_hPa, 0.190263))
+
+def compute_sea_level(altitude: float, atmospheric: float) -> float:
+    """
+    Calculates the pressure at sea level (in hPa) from the specified altitude
+    (in meters), and atmospheric pressure (in hPa).
+    # Equation taken from BMP180 datasheet (page 17):
+    # http://www.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
+
+    Args:
+        altitude    :  Altitude in meters
+        atmospheric :  Atmospheric pressure in hPa
+    
+    Return:
+        float The approximate pressure
+    """
+    return atmospheric / pow(1.0 - (altitude / 44330.0), 5.255)

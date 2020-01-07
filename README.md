@@ -30,11 +30,12 @@ GPS related Datasheets
 ## ROS2 Package Info
 
 ### Dependencies
-* RTIMULib (c++ and python)
+* RTIMULib (c++ and python) found [here](https://github.com/mattanimation/RTIMULib2)
 
 ## Setup
 for now, RTIMULib should be installed via the instructions of the readme located: `Linux/python`
 **note:**: python3 should be used
+this is required due to the fact that this repo has added the BMP280 that the v3 of the BerryGPS has.
 
 * change any setttings in the `config.yaml` and if need be
 * the `RTIMULib.ini` file should be fine minus the need to calibrate the magnitometer

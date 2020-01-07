@@ -11,7 +11,7 @@ from ament_index_python.packages import get_package_share_directory
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Quaternion, Vector3
 
-from ros2_berrygps.imu_utils import compute_height, G_TO_MPSS
+from ros2_berrygps.imu_utils import get_altitude, G_TO_MPSS
 from ros2_berrygps import better_get_parameter_or
 
 
@@ -120,7 +120,7 @@ class IMUNode(Node):
             if data is not None:
                 # self.get_logger().info("IMU_DATA: {0}".format(data))
                 (data["pressureValid"], data["pressure"], data["temperatureValid"], data["temperature"]) = self.pressure.pressureRead()
-                fusionPose = data["fusionPose"]
+                #fusionPose = data["fusionPose"]
                 #self.get_logger().info("r: {0} p: {1} y: {2}".format(
                 #    math.degrees(fusionPose[0]), 
                 #    math.degrees(fusionPose[1]),
@@ -128,14 +128,16 @@ class IMUNode(Node):
                 #))
                 
                 # TODO : publish this info too for GPS fusion
-                #if data["pressureValid"]:
-                #    self.get_logger().info("Pressure: {0}, height above sea level: {1}".format(
-                #        data["pressure"],
-                #        compute_height(data["pressure"])
-                #    ))
+                # TODO: the get_altitude should get local pressure in hPa
+                # example: inhg of 30.1 to hpa was 1019.30
+                if data["pressureValid"]:
+                    self.get_logger().info("Pressure: {0}, height above sea level: {1}".format(
+                        data["pressure"],
+                        get_altitude(data["pressure"], sea_level_hPa=1019.30)
+                    ))
                 
-                #if data["temperatureValid"]:
-                #    self.get_logger().info("Temperature: {0}".format(data["temperature"]))
+                if data["temperatureValid"]:
+                    self.get_logger().info("Temperature C: {0} Temperature F: {1}".format(data["temperature"], (data["temperature"] * (9/5)) + 32 ))
                 
                 # build msg and publish
                 qfp = data['fusionQPose']
