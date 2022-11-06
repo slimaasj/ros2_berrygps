@@ -21,14 +21,12 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='ros2_berrygps',
-            node_namespace='',
-            node_name='berrygps_node',
-            node_executable='berry_gps',
+            name='berrygps_node',
+            executable='berry_gps',
             output='screen',
             parameters=[berrygps_config_path],
             remappings=None,
             arguments=[],
-            name="",
             cwd=None,
             env=None
         )
